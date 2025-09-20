@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "ES2023",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": ".",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,9 +20,21 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
-    }
+        "@components/*": ["./src/components/*"],
+        "@context/*": ["./src/context/*"],
+        "@svg/*": ["./src/components/svg/*"],
+        "@config": ["constants.ts"],
+        "@img/*": ["./public/img/*"],
+        "@app/*": ["./src/app/*"],
+        "@text/*": ["./public/text/*"],
+        "@assets/*": ["./public/assets/*"],
+        "@themes/*": ["./src/themes/*"],
+        "@utils/*": ["./src/utils/*"],
+        "@interfaces": ["./interfaces.ts"],
+        "@/*": ["./src/*"]
+    },
+    "forceConsistentCasingInFileNames": true,
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules", "src/vendor"]
 }

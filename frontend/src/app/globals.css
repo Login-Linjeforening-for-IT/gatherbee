@@ -1,26 +1,88 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@theme {
+    --breakpoint-xs: 30rem;
+    --breakpoint-lg75: 75rem;
+    --breakpoint-2xl: 100rem;
+    --breakpoint-3xl: 120rem;
+    --color-login: #fd8738;
+    --color-login-950: #0e0e0e;
+    --color-login-900: #121212;
+    --color-login-800: #181818;
+    --color-login-700: #1a1a1a;
+    --color-login-600: #212121;
+    --color-login-500: #323232;
+    --color-login-400: #424242;
+    --color-login-300: #5e5e5e;
+    --color-login-200: #727272;
+    --color-login-100: #b0b0b0;
+    --color-login-50: #ededed;
+}
+
+@utility noscroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@utility no-calendar {
+    &::-webkit-calendar-picker-indicator {
+        -webkit-appearance: textfield;
+    }
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --w-sidebar: 13rem;
+    --h-navbar: 2.8rem;
+    --h-pageInfo: 5rem;
+    transition:
+        background 0.4s,
+        color 0.4s;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
+.dark {
+    --background: #0e0e0e;
     --foreground: #ededed;
-  }
+
+    --color-login: #fd8738;
+    --color-login-950: #0e0e0e;
+    --color-login-900: #121212;
+    --color-login-800: #181818;
+    --color-login-700: #1a1a1a;
+    --color-login-600: #212121;
+    --color-login-500: #323232;
+    --color-login-400: #424242;
+    --color-login-300: #5e5e5e;
+    --color-login-200: #6b6b6b;
+    --color-login-100: #b0b0b0;
+    --color-login-50: #ededed;
+}
+
+.light {
+    --background: #ededed;
+    --foreground: #0e0e0e;
+
+    --color-login: #fd8738;
+    --color-login-950: #ededed;
+    --color-login-900: #b0b0b0;
+    --color-login-800: #cfcfcf;
+    --color-login-700: #d9d9d9;
+    --color-login-600: #e3e3e3;
+    --color-login-500: #ebebeb;
+    --color-login-400: #f3f3f3;
+    --color-login-300: #f7f7f7;
+    --color-login-200: #fafafa;
+    --color-login-100: #fcfcfc;
+    --color-login-50: #ffffff;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+    transition:
+        background 0.4s,
+        color 0.4s;
 }
