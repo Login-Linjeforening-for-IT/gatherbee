@@ -1,15 +1,21 @@
-'use client'
-
 import { LogIn } from 'lucide-react'
 import Link from 'next/link'
-
-const loginUrl = `${process.env.NEXT_PUBLIC_BROWSER_API}/oauth2/login`
+import config from '@config'
 
 export default function Login() {
 
+    const state = Math.random().toString(36).substring(5)
+    const authQueryParams = new URLSearchParams({
+        client_id: config.authentik.CLIENT_ID as string,
+        redirect_uri: config.authentik.REDIRECT_URI as string,
+        response_type: 'code',
+        scope: 'openid profile email',
+        state: state,
+    }).toString()
+
     return (
         <Link
-            href={loginUrl}
+            href={`${config.authentik.AUTH_URL}?${authQueryParams}`}
             className='grid place-items-center'
         >
             <button
