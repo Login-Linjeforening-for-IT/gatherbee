@@ -3,6 +3,8 @@
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
+    ChartSpline,
+    ClipboardList,
     GraduationCap,
     Icon,
     LayoutDashboard
@@ -28,7 +30,17 @@ export default function Sidebar() {
             name: 'StudentBee',
             path: '/dashboard/studentbee',
             image: <GraduationCap className='w-6' />,
-        }
+        },
+        beeformed: {
+            name: 'BeeFormed',
+            path: '/dashboard/beeformed',
+            image: <ClipboardList className='w-6' />,
+        },
+        gatherbee: {
+            name: 'GatherBee',
+            path: '/dashboard/gatherbee',
+            image: <ChartSpline className='w-6' />,
+        },
     }
 
     return (

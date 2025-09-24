@@ -17,6 +17,6 @@ export default function Login() {
             'user_roles'
         )
         router.push('/')
-        router.refresh()
+        // router.refresh()
     }, [])
 }

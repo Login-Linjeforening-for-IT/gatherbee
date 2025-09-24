@@ -1,22 +1,21 @@
-CREATE TYPE web_vitals_type AS ENUM (
-    'FCP',
-    'TTFB',
-    'FID',
-    'LCP'
+CREATE TABLE URI (
+    id SERIAL PRIMARY KEY,
+    domain TEXT,
+    path TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(domain, path)
 );
 
-CREATE TABLE analytics_web_vitals (
+CREATE TABLE analytics_performances (
     id SERIAL PRIMARY KEY,
-    type web_vitals_type NOT NULL,
-    value NUMERIC NOT NULL,
-    delta NUMERIC NOT NULL,
-    navigationType TEXT,
+    URI INT NOT NULL REFERENCES URI(id) ON DELETE CASCADE,
+    duration INTEGER NOT NULL,
+    type TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE analytics_links (
+CREATE TABLE analytics_external_links (
     id SERIAL PRIMARY KEY,
-    url TEXT NOT NULL,
-    external BOOLEAN NOT NULL,
+    URI INT NOT NULL REFERENCES URI(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

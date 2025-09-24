@@ -33,6 +33,9 @@
         "**/*.d.ts",
         "**/*.json",
     ],
+    "files": [
+        "./src/types.ts"
+    ],
     "exclude": [
         "node_modules",
         "package-lock.json",

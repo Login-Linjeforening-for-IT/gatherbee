@@ -3,12 +3,14 @@ services:
     container_name: gatherbee
     image: gatherbee
     build:
-      context: ./frontend
+      context: ./
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     depends_on:
       - gatherbee-api
+    environment:
+      NEXT_PUBLIC_GATHERBEE_API_URL: http://localhost:8080
 
   gatherbee-api:
     container_name: gatherbee-api

@@ -1,21 +1,22 @@
 import pg from 'pg'
-import config from '@constants'
+import config from './constants'
+import './types'
 
-const { 
-    DB, 
-    DB_USER, 
+const {
+    DB,
+    DB_USER,
     DB_HOST,
-    DB_PASSWORD, 
-    DB_PORT, 
-    DB_MAX_CONN, 
-    DB_IDLE_TIMEOUT_MS, 
+    DB_PASSWORD,
+    DB_PORT,
+    DB_MAX_CONN,
+    DB_IDLE_TIMEOUT_MS,
     DB_TIMEOUT_MS
 } = config
 const { Pool } = pg
 const pool = new Pool({
-    user: DB_USER || "gatherbee",
+    user: DB_USER || 'gatherbee',
     host: DB_HOST,
-    database: DB || "gatherbee",
+    database: DB || 'gatherbee',
     password: DB_PASSWORD,
     port: Number(DB_PORT) || 5432,
     max: Number(DB_MAX_CONN) || 20,
@@ -27,6 +28,7 @@ export default async function run(query: string, params?: SQLParamType) {
     const client = await pool.connect()
     try {
         return await client.query(query, params ?? [])
+    // eslint-disable-next-line no-useless-catch
     } catch (error) {
         throw error
     } finally {
