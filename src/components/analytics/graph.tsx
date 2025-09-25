@@ -28,19 +28,22 @@ ChartJS.register(
 export default function Graph({data, type}: {data: Stats, type: 'visits' | 'duration'}) {
     const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
+    // label for Y axis depends on the chart `type`
+    const yAxisLabel = type === 'visits' ? 'Visits' : 'Average Duration (ms)'
+
     const chartData = {
         labels: sortedData.map(item => new Date(item.date).toLocaleDateString()),
         datasets: [
             {
                 label: type === 'visits' ? 'Visits' : 'Average Duration',
                 data: sortedData.map(item => type === 'visits' ? item.visits : item.avg_duration),
-                borderColor: '#3b82f6',
+                borderColor: '#fd8738',
                 backgroundColor: (context: ScriptableContext<'line'>) => {
                     const ctx = context.chart.ctx
                     const gradient = ctx.createLinearGradient(0, 0, 0, context.chart.height)
-                    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)')
-                    gradient.addColorStop(0.5, 'rgba(59, 130, 246, 0.4)')
-                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0)')
+                    gradient.addColorStop(0, 'rgba(253, 135, 56, 0.4)')
+                    gradient.addColorStop(0.5, 'rgba(253, 135, 56, 0.1)')
+                    gradient.addColorStop(1, 'rgba(253, 135, 56, 0)')
                     return gradient
                 },
                 fill: true,
@@ -66,6 +69,17 @@ export default function Graph({data, type}: {data: Stats, type: 'visits' | 'dura
         scales: {
             x: {
                 display: true,
+                title: {
+                    display: true,
+                    text: 'Date',
+                    color: '#888',
+                    font: {
+                        size: 12,
+                    },
+                },
+                ticks: {
+                    color: '#ddd',
+                },
                 grid: {
                     display: false,
                 },
@@ -73,6 +87,17 @@ export default function Graph({data, type}: {data: Stats, type: 'visits' | 'dura
             y: {
                 display: true,
                 beginAtZero: true,
+                title: {
+                    display: true,
+                    text: yAxisLabel,
+                    color: '#888',
+                    font: {
+                        size: 12,
+                    },
+                },
+                ticks: {
+                    color: '#ddd',
+                },
                 grid: {
                     display: false,
                 },

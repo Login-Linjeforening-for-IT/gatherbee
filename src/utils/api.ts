@@ -46,6 +46,8 @@ async function getWrapper({ path, options = {} }: WrapperProps) {
     const defaultOptions = { method: 'GET', headers }
     const finalOptions = { ...defaultOptions, ...options }
 
+    console.log(`${baseUrl}${path}`)
+
     try {
         const response = await fetch(`${baseUrl}${path}`, finalOptions)
         if (!response.ok) {

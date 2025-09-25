@@ -3,12 +3,15 @@ import dotenv from 'dotenv'
 dotenv.config({path: '../.env'})
 
 const requiredEnvironmentVariables = [
-    'AUTHENTIK_API_URL',
-    'CLIENT_ID',
-    'REDIRECT_URI',
-    'CLIENT_SECRET',
+    'NEXT_PUBLIC_URI',
+    'NEXT_PUBLIC_API_URI',
+    'NEXT_PUBLIC_AUTHENTIK_URI',
+    'NEXT_PUBLIC_AUTHENTIK_CLIENT_ID',
+    'AUTHENTIK_CLIENT_SECRET',
+    'DB_USER',
     'DB_PASSWORD',
-    'DB_HOST',
+    'DB',
+    'DB_HOST'
 ]
 
 const missingVariables = requiredEnvironmentVariables.filter(
@@ -28,11 +31,8 @@ const env = Object.fromEntries(
     requiredEnvironmentVariables.map((key) => [key, process.env[key]])
 )
 
-const AUTH_URL = `${env.AUTHENTIK_API_URL}/application/o/authorize/`
-const TOKEN_URL = `${env.AUTHENTIK_API_URL}/application/o/token/`
-
 const config = {
-    USERINFO_URL: `${env.AUTHENTIK_API_URL}/application/o/userinfo/`,
+    USERINFO_URL: `${env.NEXT_PUBLIC_AUTHENTIK_API_URL}/application/o/userinfo/`,
     DB_PORT: env.DB_PORT,
     DB_MAX_CONN: env.DB_MAX_CONN,
     DB_IDLE_TIMEOUT_MS: env.DB_IDLE_TIMEOUT_MS,
@@ -41,11 +41,8 @@ const config = {
     DB_HOST: env.DB_HOST,
     DB_USER: env.DB_USER,
     DB_PASSWORD: env.DB_PASSWORD,
-    CLIENT_ID: env.CLIENT_ID,
-    REDIRECT_URI: env.REDIRECT_URI,
-    TOKEN_URL,
+    CLIENT_ID: env.NEXT_PUBLIC_CLIENT_ID,
     CLIENT_SECRET: env.CLIENT_SECRET,
-    AUTH_URL,
 }
 
 export default config

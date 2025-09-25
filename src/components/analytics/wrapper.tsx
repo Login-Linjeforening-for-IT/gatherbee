@@ -2,6 +2,7 @@ import { getStatsPath } from '@utils/api'
 import Graph from './graph'
 import Paths from './paths'
 import Options from './options'
+import Tile from './tile'
 
 type AnalyticsWrapperProps = {
     domain: string
@@ -19,13 +20,21 @@ export async function AnalyticsWrapper({domain, path, type = 'navigation', from_
     const stats = await getStatsPath({domain, path, type, from_date, to_date})
 
     return (
-        <div className='flex flex-row gap-20 p-4'>
+        <div className='flex flex-row gap-20 p-4 h-full w-full'>
             <Paths domain={domain} />
             {typeof stats !== 'string' && (
                 <div className='flex flex-1 flex-col w-full items-center'>
-                    <Graph data={stats.stats} type='visits' />
-                    <Graph data={stats.stats} type='duration' />
-                    <Options type={type} from_date={from_date} to_date={to_date} />
+                    <div className='flex flex-row gap-1 justify-between w-full'>
+                        <Tile title='Total Visits' data={3453} dataSuffix='visits' />
+                        <Tile title='Average Duration' data={1234} dataSuffix='ms' />
+                        <Tile title='Total Pageviews' data={5678} dataSuffix='pageviews' />
+                        <Tile title='Bounce Rate' data={34} dataSuffix='%' />
+                    </div>
+                    <div className='flex flex-col w-full justify-end h-full'>
+                        <Graph data={stats.stats} type='visits' />
+                        <Graph data={stats.stats} type='duration' />
+                        <Options type={type} from_date={from_date} to_date={to_date} />
+                    </div>
                 </div>
             )}
         </div>

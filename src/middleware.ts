@@ -6,7 +6,7 @@ export const config = {
 }
 
 export async function middleware(req: NextRequest) {
-    const tokenCookie = req.cookies.get('access_token')
+    /* const tokenCookie = req.cookies.get('access_token')
     let validToken = false
 
     if (!pathIsAllowedWhileUnauthorized(req.nextUrl.pathname)) {
@@ -23,7 +23,7 @@ export async function middleware(req: NextRequest) {
                 return NextResponse.redirect(new URL('/api/logout', req.url))
             }
         }
-    }
+    } */
 
     const theme = req.cookies.get('theme')?.value || 'dark'
     const res = NextResponse.next()

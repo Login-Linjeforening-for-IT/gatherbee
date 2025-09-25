@@ -45,7 +45,6 @@ export default function Options({type: initialType, from_date: initialFromDate, 
     return (
         <div className='w-full flex flex-row gap-2 justify-between'>
             <div className='flex flex-row items-center gap-2'>
-                <label className='text-sm font-medium whitespace-nowrap'>Type</label>
                 <div className='flex border border-gray-600 rounded-full overflow-hidden'>
                     <button
                         className={`px-4 py-2 rounded-full ${
