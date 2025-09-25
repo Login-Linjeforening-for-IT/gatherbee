@@ -1,7 +1,9 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import Login from '@components/login/login'
 import Version from '@components/version/version'
+import { LogIn } from 'lucide-react'
+import Link from 'next/link'
+import config from '@config'
 
 export default async function Home() {
     const Cookies = await cookies()
@@ -17,7 +19,17 @@ export default async function Home() {
                     GatherBee
                 </h1>
                 <p className='mt-2 text-foreground text-center font-semibold text-login-300'>GatherBee</p>
-                <Login />
+                <Link
+                    href={config.auth.LOGIN_URI}
+                    className='grid place-items-center'
+                >
+                    <button
+                        className={'flex align-middle gap-2 mt-2 rounded-lg bg-login px-8 py-1  hover:bg-orange-500 mb-2'}
+                    >
+                        Login
+                        <LogIn className='w-5' />
+                    </button>
+                </Link>
             </div>
             <Version />
         </main>
