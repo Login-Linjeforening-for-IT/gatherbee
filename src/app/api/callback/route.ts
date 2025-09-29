@@ -60,7 +60,7 @@ export async function GET(req: Request) {
 
         const userInfo = await userInfoResponse.json() as UserInfo
 
-        const redirectUrl = new URL(`${config.auth.LOGIN_URI}`)
+        const redirectUrl = new URL(`${config.auth.TOKEN_URI}`)
         const params = new URLSearchParams({
             id: userInfo.sub,
             name: userInfo.name,
