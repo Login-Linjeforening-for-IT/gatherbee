@@ -25,33 +25,82 @@ ChartJS.register(
     Filler
 )
 
-export default function Graph({data, type}: {data: Stats, type: 'visits' | 'duration'}) {
-    const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+type DatasetConfig = {
+    label: string
+    data: Record<string, unknown>[]
+    dateProperty: string
+    valueProperty: string
+    borderColor?: string
+}
 
-    // label for Y axis depends on the chart `type`
-    const yAxisLabel = type === 'visits' ? 'Visits' : 'Average Duration (ms)'
+type GraphProps = {
+    datasets: DatasetConfig[]
+    title: string
+    yAxisLabel: string
+    xAxisLabel: string
+    showLegend?: boolean
+}
+
+export default function Graph({datasets, title, yAxisLabel, xAxisLabel, showLegend = false}: GraphProps) {
+    const allDates = new Set<string>()
+    datasets.forEach(dataset => {
+        dataset.data.forEach(item => {
+            allDates.add(item[dataset.dateProperty] as string)
+        })
+    })
+    const sortedDates = Array.from(allDates).sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+
+    const chartDatasets = datasets.map((dataset, index) => {
+        const sortedData = [...dataset.data].sort((a, b) =>
+            new Date(a[dataset.dateProperty] as string).getTime() - new Date(b[dataset.dateProperty] as string).getTime()
+        )
+
+        // Create data array aligned with sortedDates
+        const alignedData = sortedDates.map(date => {
+            const item = sortedData.find(d => d[dataset.dateProperty] === date)
+            return item ? (item[dataset.valueProperty] as number) : 0
+        })
+
+        const colors = [
+            '#fd8738', // Orange
+            '#38bdf8', // Blue
+            '#10b981', // Green
+            '#f59e0b', // Yellow
+            '#ef4444', // Red
+            '#8b5cf6', // Purple
+        ]
+        const color = dataset.borderColor || colors[index % colors.length]
+
+        // Convert hex to rgba
+        const hexToRgba = (hex: string, alpha: number) => {
+            const r = parseInt(hex.slice(1, 3), 16)
+            const g = parseInt(hex.slice(3, 5), 16)
+            const b = parseInt(hex.slice(5, 7), 16)
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`
+        }
+
+        return {
+            label: dataset.label,
+            data: alignedData,
+            borderColor: color,
+            backgroundColor: (context: ScriptableContext<'line'>) => {
+                const ctx = context.chart.ctx
+                const gradient = ctx.createLinearGradient(0, 0, 0, context.chart.height)
+                gradient.addColorStop(0, hexToRgba(color, 0.4))
+                gradient.addColorStop(0.5, hexToRgba(color, 0.1))
+                gradient.addColorStop(1, hexToRgba(color, 0))
+                return gradient
+            },
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 0,
+        }
+    })
 
     const chartData = {
-        labels: sortedData.map(item => new Date(item.date).toLocaleDateString()),
-        datasets: [
-            {
-                label: type === 'visits' ? 'Visits' : 'Average Duration',
-                data: sortedData.map(item => type === 'visits' ? item.visits : item.avg_duration),
-                borderColor: '#fd8738',
-                backgroundColor: (context: ScriptableContext<'line'>) => {
-                    const ctx = context.chart.ctx
-                    const gradient = ctx.createLinearGradient(0, 0, 0, context.chart.height)
-                    gradient.addColorStop(0, 'rgba(253, 135, 56, 0.4)')
-                    gradient.addColorStop(0.5, 'rgba(253, 135, 56, 0.1)')
-                    gradient.addColorStop(1, 'rgba(253, 135, 56, 0)')
-                    return gradient
-                },
-                fill: true,
-                tension: 0.4,
-                pointRadius: 0,
-                pointHoverRadius: 0,
-            },
-        ],
+        labels: sortedDates.map(date => new Date(date).toLocaleDateString()),
+        datasets: chartDatasets,
     }
 
     const options = {
@@ -59,7 +108,12 @@ export default function Graph({data, type}: {data: Stats, type: 'visits' | 'dura
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false,
+                display: showLegend || datasets.length > 1,
+                position: 'top' as const,
+                labels: {
+                    usePointStyle: true,
+                    color: '#ddd',
+                },
             },
             tooltip: {
                 mode: 'index' as const,
@@ -71,7 +125,7 @@ export default function Graph({data, type}: {data: Stats, type: 'visits' | 'dura
                 display: true,
                 title: {
                     display: true,
-                    text: 'Date',
+                    text: xAxisLabel,
                     color: '#888',
                     font: {
                         size: 12,
@@ -112,7 +166,7 @@ export default function Graph({data, type}: {data: Stats, type: 'visits' | 'dura
 
     return (
         <div className='w-full'>
-            <h2 className='font-semibold text-lg pb-4'>{type === 'visits' ? 'Visit Statistics' : 'Duration Statistics'}</h2>
+            <h2 className='font-semibold text-lg pb-4'>{title}</h2>
             <div className='h-64 w-full'>
                 <Line data={chartData} options={options} width='100%' height='100%' />
             </div>

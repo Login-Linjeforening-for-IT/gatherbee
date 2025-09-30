@@ -1,16 +1,28 @@
 
-import { FastifyInstance, FastifyPluginOptions } from 'fastify'
+import { FastifyInstance } from 'fastify'
 import getIndex from './handlers/index/getIndex'
-import getPaths from './handlers/performance/getPaths'
+import getPaths from './handlers/uri/getPaths'
 import postPerformance from './handlers/performance/postPerformance'
-import getPerformanceStats from './handlers/performance/getPerformanceStats'
+import getPerformance from './handlers/performance/getPerformance'
+import postVisitor from './handlers/visitors/postVisitor'
+import getVisitors from './handlers/visitors/getVisitors'
+import getTopStats from './handlers/topStats/getTopStats'
 
-export default async function apiRoutes(fastify: FastifyInstance, _options: FastifyPluginOptions) {
+export default async function apiRoutes(fastify: FastifyInstance) {
     // index
     fastify.get('/', getIndex)
 
+    // uri paths
+    fastify.get('/uri/paths', getPaths)
+
     // performance analytics
-    fastify.get('/performance/paths', getPaths)
     fastify.post('/performance', postPerformance)
-    fastify.get('/performance/stats', getPerformanceStats)
+    fastify.get('/performance', getPerformance)
+
+    // unique visitors analytics
+    fastify.post('/visitors', postVisitor)
+    fastify.get('/visitors', getVisitors)
+
+    // top stats
+    fastify.get('/stats/top', getTopStats)
 }

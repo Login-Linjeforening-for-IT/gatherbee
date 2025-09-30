@@ -1,32 +1,26 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import run from '../../db'
 
-interface PerformanceBody {
+interface UniqueVisitorBody {
     domain: string
-    pathname: string
-    duration: number
-    type: string
+    pathname?: string | null
 }
 
-export default async function postPerformance(request: FastifyRequest, reply: FastifyReply) {
+export default async function postVisitor(request: FastifyRequest, reply: FastifyReply) {
     try {
-        const { domain, pathname, duration, type } = request.body as PerformanceBody
+        const { domain, pathname } = request.body as UniqueVisitorBody
 
-        if (!pathname || duration === undefined || !type) {
+        if (!domain) {
             return reply.status(400).send({
-                error: 'Missing required fields: pathname, duration, type'
+                error: 'Missing required field: domain'
             })
         }
 
-        if (typeof duration !== 'number' || duration < 0) {
-            return reply.status(400).send({
-                error: 'Duration must be a positive number'
-            })
-        }
+        const path = pathname || null
 
         const uriResult = await run(
             'INSERT INTO URI (domain, path) VALUES ($1, $2) ON CONFLICT (domain, path) DO NOTHING RETURNING id',
-            [domain, pathname]
+            [domain, path]
         )
 
         let uriId: number
@@ -36,7 +30,7 @@ export default async function postPerformance(request: FastifyRequest, reply: Fa
         } else {
             const existingUri = await run(
                 'SELECT id FROM URI WHERE domain = $1 AND path = $2',
-                [domain, pathname]
+                [domain, path]
             )
 
             if (existingUri.rows.length === 0) {
@@ -49,17 +43,22 @@ export default async function postPerformance(request: FastifyRequest, reply: Fa
         }
 
         await run(
-            'INSERT INTO analytics_performances (URI, duration, type) VALUES ($1, $2, $3)',
-            [uriId, Math.round(duration), type]
+            'INSERT INTO analytics_unique_visitors (URI) VALUES ($1)',
+            [uriId]
         )
 
         return reply.status(201).send({
             success: true,
-            message: 'Performance data recorded successfully'
+            message: 'Unique visitor recorded successfully',
+            data: {
+                domain,
+                path,
+                recorded_at: new Date().toISOString()
+            }
         })
 
     } catch (error) {
-        console.error('Error recording performance data:', error)
+        console.error('Error recording unique visitor:', error)
         return reply.status(500).send({
             error: 'Internal server error'
         })
