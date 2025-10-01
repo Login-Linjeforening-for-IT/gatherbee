@@ -20,7 +20,7 @@ export default async function apiRoutes(fastify: FastifyInstance) {
     fastify.get('/performance', getPerformance)
 
     // unique visitors analytics
-    fastify.post('/visitors', postVisitor)
+    fastify.post('/visitor', postVisitor)
     fastify.get('/visitors', getVisitors)
 
     // top stats

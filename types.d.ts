@@ -8,16 +8,15 @@ type GetPathsProps = {
 type GetStatsPathProps = {
     domain: string
     path: string
-    type?: 'navigation' | 'load'
     from_date: string
     to_date: string
     group_by?: Group_By
 }
 
 type Stats = {
-    date: string
-    avg_duration: number
-    visits: number
+    period: string
+    navigation: number
+    load: number
 }[]
 
 type StatsResponse = GetStatsPathProps & {
@@ -26,7 +25,7 @@ type StatsResponse = GetStatsPathProps & {
 
 type GetVisitorsProps = {
     domain: string
-    path?: string
+    path: string
     from_date: string
     to_date: string
     group_by?: Group_By
@@ -35,6 +34,7 @@ type GetVisitorsProps = {
 type VisitorStats = {
     period: string
     unique_visitors: number
+    total_visits: number
 }[]
 
 type VisitorsResponse = {

@@ -3,7 +3,7 @@ import run from '../../db'
 
 interface UniqueVisitorQuery {
     domain: string
-    path?: string
+    path: string
     from_date: string
     to_date: string
     group_by?: 'day' | 'week' | 'month'
@@ -13,14 +13,13 @@ export default async function getVisitors(request: FastifyRequest, reply: Fastif
     try {
         const { domain, path, from_date, to_date, group_by = 'day' } = request.query as UniqueVisitorQuery
 
-        if (!domain || !from_date || !to_date) {
+        if (!domain || !path || !from_date || !to_date) {
             return reply.status(400).send({
-                error: 'Missing required parameters: domain, from_date, to_date'
+                error: 'Missing required parameters: domain, path, from_date, to_date'
             })
         }
 
         let query: string
-        let params: (string | null)[]
 
         const dateGrouping = {
             day: 'DATE(auv.created_at)',
@@ -28,36 +27,28 @@ export default async function getVisitors(request: FastifyRequest, reply: Fastif
             month: 'DATE_TRUNC(\'month\', auv.created_at)'
         }[group_by] || 'DATE(auv.created_at)'
 
-        if (path !== undefined && path !== null) {
-            query = `
-                SELECT 
-                    ${dateGrouping} as period,
-                    COUNT(*) as unique_visitors
-                FROM analytics_unique_visitors auv
-                JOIN URI u ON auv.URI = u.id
-                WHERE u.domain = $1 AND u.path = $2
-            `
-            params = [domain, path]
-        } else {
-            query = `
-                SELECT 
-                    ${dateGrouping} as period,
-                    COUNT(*) as unique_visitors
-                FROM analytics_unique_visitors auv
-                JOIN URI u ON auv.URI = u.id
-                WHERE u.domain = $1 AND u.path IS NULL
-            `
-            params = [domain]
-        }
+        query = `
+            SELECT 
+                ${dateGrouping} as period,
+                COUNT(DISTINCT auv.id) as unique_visitors,
+                COUNT(ap.id) as total_visits
+            FROM analytics_unique_visitors auv
+            JOIN URI u ON auv.URI = u.id
+            LEFT JOIN analytics_performances ap ON ap.URI = u.id AND ${dateGrouping.replace('auv.created_at', 'ap.created_at')} = ${dateGrouping}
+            WHERE u.domain = $1 AND u.path = $2
+        `
+        const params = [domain, path]
+
+        const finalParams = [...params]
 
         if (from_date) {
-            query += ` AND auv.created_at >= $${params.length + 1}::date`
-            params.push(from_date)
+            query += ' AND auv.created_at >= $3::date AND (ap.created_at IS NULL OR ap.created_at >= $3::date)'
+            finalParams.push(from_date)
         }
 
         if (to_date) {
-            query += ` AND auv.created_at < ($${params.length + 1}::date + INTERVAL '1 day')`
-            params.push(to_date)
+            query += ' AND auv.created_at < ($4::date + INTERVAL \'1 day\') AND (ap.created_at IS NULL OR ap.created_at < ($4::date + INTERVAL \'1 day\'))'
+            finalParams.push(to_date)
         }
 
         query += `
@@ -65,19 +56,20 @@ export default async function getVisitors(request: FastifyRequest, reply: Fastif
             ORDER BY period ASC
         `
 
-        const result = await run(query, params)
+        const result = await run(query, finalParams)
 
         const stats = result.rows.map(row => ({
             period: row.period,
-            unique_visitors: parseInt(row.unique_visitors)
+            unique_visitors: parseInt(row.unique_visitors),
+            total_visits: parseInt(row.total_visits)
         }))
 
         return reply.send({
             domain,
-            path: path !== undefined ? path : null,
+            path,
             group_by,
-            from_date: from_date || null,
-            to_date: to_date || null,
+            from_date,
+            to_date,
             stats
         })
 

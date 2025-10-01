@@ -6,7 +6,7 @@ type Tree = { [key: string]: Tree }
 function buildTree(paths: string[]): Tree {
     const tree: Tree = { '/': {} }
     for (const path of paths) {
-        if (path === '/') continue
+        if (!path || typeof path !== 'string' || path === '/') continue
         const parts = path.split('/').filter(p => p)
         let current = tree['/']
         for (const part of parts) {
@@ -69,6 +69,10 @@ export default async function Paths({ domain }: { domain: string }) {
 
     if (data === null || typeof data === 'string') {
         return <div>Error: {data}</div>
+    }
+
+    if (!data.paths || !Array.isArray(data.paths)) {
+        return <div>Error: Invalid paths data</div>
     }
 
     const tree = buildTree(data.paths)

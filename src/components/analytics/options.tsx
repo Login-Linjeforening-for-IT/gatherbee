@@ -39,7 +39,7 @@ export default function Options({from_date: initialFromDate, to_date: initialToD
 
     useEffect(() => {
         setDefaults({ from_date: '', to_date: '' })
-    }, [searchParams, router])
+    }, [])
 
     return (
         <div className='w-full flex flex-row gap-2 justify-between'>

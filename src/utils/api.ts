@@ -20,11 +20,10 @@ export async function getPaths(domain: string): Promise<GetPathsProps | string> 
     return await getWrapper({ path })
 }
 
-export async function getPerformance({domain, path, type, from_date, to_date, group_by = 'day'}: GetStatsPathProps): Promise<StatsResponse | string> {
+export async function getPerformance({domain, path, from_date, to_date, group_by = 'day'}: GetStatsPathProps): Promise<StatsResponse | string> {
     const queryParts = new URLSearchParams({
         domain: String(domain),
         path: String(path),
-        ...(type && { type: String(type) }),
         from_date: String(from_date),
         to_date: String(to_date),
         group_by: String(group_by),
@@ -37,7 +36,7 @@ export async function getPerformance({domain, path, type, from_date, to_date, gr
 export async function getVisitors({domain, path, from_date, to_date, group_by = 'day'}: GetVisitorsProps): Promise<VisitorsResponse | string> {
     const queryParts = new URLSearchParams({
         domain: String(domain),
-        ...(path && { path: String(path) }),
+        path: String(path),
         from_date: String(from_date),
         to_date: String(to_date),
         group_by: String(group_by),

@@ -7,12 +7,11 @@ interface StatsQuery {
     from_date: string
     to_date: string
     group_by?: 'day' | 'week' | 'month'
-    type: string
 }
 
 export default async function getPerformance(request: FastifyRequest, reply: FastifyReply) {
     try {
-        const { domain, path, type, from_date, to_date, group_by = 'day' } = request.query as StatsQuery
+        const { domain, path, from_date, to_date, group_by = 'day' } = request.query as StatsQuery
 
         if (!domain || !path || !from_date || !to_date || !group_by) {
             return reply.status(400).send({
@@ -29,32 +28,31 @@ export default async function getPerformance(request: FastifyRequest, reply: Fas
         const query = `
             SELECT
                 ${dateGrouping} as period,
-                AVG(ap.duration) as avg_duration,
-                COUNT(*) as visits
+                AVG(CASE WHEN ap.type = 'navigation' THEN ap.duration END) as navigation_avg,
+                AVG(CASE WHEN ap.type = 'load' THEN ap.duration END) as load_avg
             FROM analytics_performances ap
             JOIN URI u ON ap.URI = u.id
             WHERE u.domain = $1 
                 AND u.path = $2 
-                AND ap.type = $3
-                AND ap.created_at >= $4::date
-                AND ap.created_at <= $5::date
+                AND ap.type IN ('navigation', 'load')
+                AND ap.created_at >= $3::date
+                AND ap.created_at <= $4::date
             GROUP BY ${dateGrouping}
             ORDER BY period ASC
         `
 
-        const params = [domain, path, type, from_date, to_date]
+        const params = [domain, path, from_date, to_date]
         const result = await run(query, params)
 
         const stats = result.rows.map(row => ({
-            date: row.period,
-            avg_duration: parseFloat(row.avg_duration),
-            visits: parseInt(row.visits)
+            period: row.period,
+            navigation: row.navigation_avg ? parseFloat(row.navigation_avg) : null,
+            load: row.load_avg ? parseFloat(row.load_avg) : null
         }))
 
         return reply.send({
             domain,
             path,
-            type,
             from_date,
             to_date,
             stats

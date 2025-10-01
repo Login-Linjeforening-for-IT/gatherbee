@@ -20,8 +20,7 @@ export async function AnalyticsWrapper({domain, path, from_date, to_date, visits
     from_date = from_date || new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     to_date = to_date || now.toISOString().split('T')[0]
 
-    const performanceNavigationResult = await getPerformance({domain, path, type: 'navigation', from_date, to_date, group_by: 'day'})
-    const performanceLoadResult = await getPerformance({domain, path, type: 'load', from_date, to_date, group_by: 'day'})
+    const performanceResult = await getPerformance({domain, path, from_date, to_date, group_by: 'day'})
     const visitorsResult = await getVisitors({domain, path, from_date, to_date, group_by: 'day'})
     const topStatsResult = await getTopStats(domain, {
         visits_range: visits_range || 'month',
@@ -30,8 +29,7 @@ export async function AnalyticsWrapper({domain, path, from_date, to_date, visits
         load_range: load_range || 'month'
     })
 
-    const performanceNavigation = typeof performanceNavigationResult !== 'string' ? performanceNavigationResult : {stats: []}
-    const performanceLoad = typeof performanceLoadResult !== 'string' ? performanceLoadResult : {stats: []}
+    const performance = typeof performanceResult !== 'string' ? performanceResult : {stats: []}
     const visitors = typeof visitorsResult !== 'string' ? visitorsResult : {stats: []}
     const topStats = typeof topStatsResult !== 'string' ? topStatsResult.stats : {
         total_visits: 0,
@@ -55,9 +53,9 @@ export async function AnalyticsWrapper({domain, path, from_date, to_date, visits
                         datasets={[
                             {
                                 label: 'Total Visits',
-                                data: performanceNavigation.stats,
-                                dateProperty: 'date',
-                                valueProperty: 'visits',
+                                data: visitors.stats,
+                                dateProperty: 'period',
+                                valueProperty: 'total_visits',
                                 borderColor: '#fd8738'
                             },
                             {
@@ -76,16 +74,16 @@ export async function AnalyticsWrapper({domain, path, from_date, to_date, visits
                         datasets={[
                             {
                                 label: 'Navigation Load',
-                                data: performanceNavigation.stats,
-                                dateProperty: 'date',
-                                valueProperty: 'avg_duration',
+                                data: performance.stats,
+                                dateProperty: 'period',
+                                valueProperty: 'navigation',
                                 borderColor: '#fd8738'
                             },
                             {
                                 label: 'Full Load',
-                                data: performanceLoad.stats,
-                                dateProperty: 'date',
-                                valueProperty: 'avg_duration',
+                                data: performance.stats,
+                                dateProperty: 'period',
+                                valueProperty: 'load',
                                 borderColor: '#fc6703'
                             }
                         ]}

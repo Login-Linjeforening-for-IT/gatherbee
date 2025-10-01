@@ -30,7 +30,7 @@ type DatasetConfig = {
     data: Record<string, unknown>[]
     dateProperty: string
     valueProperty: string
-    borderColor?: string
+    borderColor: string
 }
 
 type GraphProps = {
@@ -50,28 +50,18 @@ export default function Graph({datasets, title, yAxisLabel, xAxisLabel, showLege
     })
     const sortedDates = Array.from(allDates).sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
 
-    const chartDatasets = datasets.map((dataset, index) => {
+    const chartDatasets = datasets.map((dataset) => {
         const sortedData = [...dataset.data].sort((a, b) =>
             new Date(a[dataset.dateProperty] as string).getTime() - new Date(b[dataset.dateProperty] as string).getTime()
         )
 
-        // Create data array aligned with sortedDates
         const alignedData = sortedDates.map(date => {
             const item = sortedData.find(d => d[dataset.dateProperty] === date)
-            return item ? (item[dataset.valueProperty] as number) : 0
+            return item ? (item[dataset.valueProperty] as number) : null
         })
 
-        const colors = [
-            '#fd8738', // Orange
-            '#38bdf8', // Blue
-            '#10b981', // Green
-            '#f59e0b', // Yellow
-            '#ef4444', // Red
-            '#8b5cf6', // Purple
-        ]
-        const color = dataset.borderColor || colors[index % colors.length]
+        const color = dataset.borderColor
 
-        // Convert hex to rgba
         const hexToRgba = (hex: string, alpha: number) => {
             const r = parseInt(hex.slice(1, 3), 16)
             const g = parseInt(hex.slice(3, 5), 16)
@@ -95,6 +85,18 @@ export default function Graph({datasets, title, yAxisLabel, xAxisLabel, showLege
             tension: 0.4,
             pointRadius: 0,
             pointHoverRadius: 0,
+            spanGaps: true,
+            segment: {
+                borderDash: (ctx: { p0DataIndex: number; p1DataIndex: number }) => {
+                    const currentIndex = Math.min(ctx.p0DataIndex, ctx.p1DataIndex)
+                    for (let i = currentIndex; i <= Math.max(ctx.p0DataIndex, ctx.p1DataIndex); i++) {
+                        if (alignedData[i] === null) {
+                            return [8, 4]
+                        }
+                    }
+                    return []
+                }
+            }
         }
     })
 
