@@ -40,7 +40,7 @@ export async function AnalyticsWrapper({domain, path, from_date, to_date, visits
 
     return (
         <div className='flex flex-row gap-20 p-4 h-full w-full'>
-            <Paths domain={domain} />
+            <Paths domain={domain} selectedPath={path} />
             <div className='flex flex-1 flex-col w-full items-center'>
                 <div className='flex flex-row gap-1 justify-between w-full'>
                     <Tile title='Total Visits' data={topStats.total_visits} dataSuffix='visits' searchParamKey='visits_range' />

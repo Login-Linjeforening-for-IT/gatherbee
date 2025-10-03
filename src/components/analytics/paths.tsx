@@ -28,7 +28,7 @@ function getDisplayPath(tree: Tree): string {
     return ''
 }
 
-function Tree({ tree, prefix = '', currentPath = '' }: { tree: Tree, prefix?: string, currentPath?: string }) {
+function Tree({ tree, prefix = '', currentPath = '', selectedPath }: { tree: Tree, prefix?: string, currentPath?: string, selectedPath?: string }) {
     const entries = Object.entries(tree)
     return (
         <div className='font-mono'>
@@ -39,11 +39,18 @@ function Tree({ tree, prefix = '', currentPath = '' }: { tree: Tree, prefix?: st
                 if (key === '/') {
                     const display = '/'
                     const path = '/'
+                    const isSelected = selectedPath === path
                     const shouldRecurse = Object.keys(subtree).length > 0
                     return (
                         <div key={key} className='whitespace-pre'>
-                            {prefix}{connector}<Link href={`?path=${encodeURIComponent(path)}`} >{display}</Link>
-                            {shouldRecurse && <Tree tree={subtree} prefix='' currentPath={path} />}
+                            {prefix}{connector}
+                            <Link
+                                href={`?path=${encodeURIComponent(path)}`}
+                                className={isSelected ? 'text-login font-semibold' : 'hover:text-login/90'}
+                            >
+                                {display}
+                            </Link>
+                            {shouldRecurse && <Tree tree={subtree} prefix='' currentPath={path} selectedPath={selectedPath} />}
                         </div>
                     )
                 } else {
@@ -51,11 +58,18 @@ function Tree({ tree, prefix = '', currentPath = '' }: { tree: Tree, prefix?: st
                     const display = '/' + key + (collapsedPath ? '/' + collapsedPath : '')
                     const basePath = currentPath === '/' ? `/${key}` : `${currentPath}/${key}`
                     const path = basePath + (collapsedPath ? '/' + collapsedPath : '')
+                    const isSelected = selectedPath === path
                     const shouldRecurse = Object.keys(subtree).length > 1
                     return (
                         <div key={key} className='whitespace-pre'>
-                            {prefix}{connector}<Link href={`?path=${encodeURIComponent(path)}`} >{display}</Link>
-                            {shouldRecurse && <Tree tree={subtree} prefix={newPrefix} currentPath={path} />}
+                            {prefix}{connector}
+                            <Link
+                                href={`?path=${encodeURIComponent(path)}`}
+                                className={isSelected ? 'text-login font-semibold' : 'hover:text-login/90'}
+                            >
+                                {display}
+                            </Link>
+                            {shouldRecurse && <Tree tree={subtree} prefix={newPrefix} currentPath={path} selectedPath={selectedPath} />}
                         </div>
                     )
                 }
@@ -64,7 +78,7 @@ function Tree({ tree, prefix = '', currentPath = '' }: { tree: Tree, prefix?: st
     )
 }
 
-export default async function Paths({ domain }: { domain: string }) {
+export default async function Paths({ domain, selectedPath }: { domain: string, selectedPath: string }) {
     const data = await getPaths(domain)
 
     if (data === null || typeof data === 'string') {
@@ -80,7 +94,7 @@ export default async function Paths({ domain }: { domain: string }) {
     return (
         <div>
             <h2 className='font-semibold text-lg pb-4'>Paths</h2>
-            <Tree tree={tree} />
+            <Tree tree={tree} selectedPath={selectedPath} />
         </div>
     )
 }
