@@ -3,6 +3,7 @@ import 'uibee/styles'
 import './globals.css'
 import { cookies } from 'next/headers'
 import Nav from '@/components/navbar/nav'
+import Instrumentation from '@utils/instrumentation'
 
 export const metadata: Metadata = {
     title: 'GatherBee',
@@ -22,6 +23,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                 <main className='flex flex-1 overflow-hidden'>
                     <div className='w-full bg-login-800'>{children}</div>
                 </main>
+                <Instrumentation />
             </body>
         </html>
     )

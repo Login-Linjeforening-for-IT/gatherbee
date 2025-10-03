@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import config from '@config'
 
 export async function GET(request: NextRequest) {
     const url = new URL(request.url)
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (btg) {
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+        return NextResponse.redirect(new URL('/dashboard', config.URL.FRONTEND))
     }
 
     const accessToken = url.searchParams.get('access_token')!
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
     const userName = url.searchParams.get('user_name')!
     const userRoles = url.searchParams.get('user_roles')!
 
-    const response = NextResponse.redirect(new URL('/dashboard', request.url))
+    const response = NextResponse.redirect(new URL('/dashboard', config.URL.FRONTEND))
     response.cookies.set('access_token', accessToken, { path: '/', sameSite: 'lax' })
     response.cookies.set('access_token_expires', accessTokenExpires, { path: '/', sameSite: 'lax' })
     response.cookies.set('refresh_token', refreshToken, { path: '/', sameSite: 'lax' })

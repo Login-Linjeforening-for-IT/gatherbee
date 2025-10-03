@@ -9,6 +9,8 @@ services:
       - "3000:3000"
     depends_on:
       - gatherbee-api
+    env_file:
+      - ./.env
 
   gatherbee-api:
     container_name: gatherbee-api

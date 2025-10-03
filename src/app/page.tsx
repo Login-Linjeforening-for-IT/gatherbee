@@ -14,7 +14,7 @@ export default async function Home() {
         <LoginPage
             title='GatherBee'
             description='Analytics and monitoring platform'
-            redirectURI={config.auth.LOGIN_URI}
+            redirectURI={config.AUTH.LOGIN_URL}
             version={config.version}
         />
     )

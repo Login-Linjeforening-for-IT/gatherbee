@@ -22,14 +22,14 @@ export async function GET(req: Request) {
 
     try {
         // Exchanges callback code for access token
-        const tokenResponse = await fetch(config.authentik.TOKEN_URI, {
+        const tokenResponse = await fetch(config.AUTHENTIK.TOKEN_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({
-                client_id: config.authentik.CLIENT_ID as string,
-                client_secret: config.authentik.CLIENT_SECRET as string,
+                client_id: config.AUTHENTIK.CLIENT_ID as string,
+                client_secret: config.AUTHENTIK.CLIENT_SECRET as string,
                 code: code as string,
-                redirect_uri: config.auth.REDIRECT_URI as string,
+                redirect_uri: config.AUTH.REDIRECT_URL as string,
                 grant_type: 'authorization_code',
             }).toString()
         })
@@ -46,7 +46,7 @@ export async function GET(req: Request) {
         const token = JSON.parse(tokenResponseBody)
 
         // Fetches user info using access token
-        const userInfoResponse = await fetch(config.authentik.USERINFO_URI, {
+        const userInfoResponse = await fetch(config.AUTHENTIK.USERINFO_URL, {
             headers: { Authorization: `Bearer ${token.access_token}` }
         })
 
@@ -60,7 +60,7 @@ export async function GET(req: Request) {
 
         const userInfo = await userInfoResponse.json() as UserInfo
 
-        const redirectUrl = new URL(`${config.auth.TOKEN_URI}`)
+        const redirectUrl = new URL(`${config.AUTH.TOKEN_URL}`)
         const params = new URLSearchParams({
             id: userInfo.sub,
             name: userInfo.name,

@@ -40,6 +40,7 @@ function RightSide({ token }: { token: string | undefined }) {
                         'hover:*:text-login hover:*:stroke-login'
                     }
                     href='/api/logout'
+                    prefetch={false}
                 >
                     <LogOut className='w-5' />
                     <h1>Logout</h1>

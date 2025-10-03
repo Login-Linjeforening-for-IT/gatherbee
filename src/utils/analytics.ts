@@ -4,13 +4,13 @@ import config from '@config'
 
 export async function sendPerformanceData(pathname: string, duration: number, type: string) {
     try {
-        await fetch(`${config.url.GATHERBEE_API}/api/performance`, {
+        await fetch(`${config.URL.API}/api/performance`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                domain: config.domains.gatherbee,
+                domain: config.DOMAINS.GATHERBEE,
                 pathname,
                 duration,
                 type,
@@ -23,13 +23,13 @@ export async function sendPerformanceData(pathname: string, duration: number, ty
 
 export async function sendVisitData(pathname?: string) {
     try {
-        await fetch(`${config.url.GATHERBEE_API}/api/visitor`, {
+        await fetch(`${config.URL.API}/api/visitor`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                domain: config.domains.gatherbee,
+                domain: config.DOMAINS.GATHERBEE,
                 pathname,
             }),
         })

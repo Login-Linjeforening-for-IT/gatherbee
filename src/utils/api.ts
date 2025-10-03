@@ -3,7 +3,7 @@
 import config from '@config'
 import { cookies } from 'next/headers'
 
-const baseUrl = config.url.GATHERBEE_API
+const baseUrl = config.URL.API
 
 type WrapperProps = {
     path: string
@@ -79,8 +79,6 @@ async function getWrapper({ path, options = {} }: WrapperProps) {
 
     const defaultOptions = { method: 'GET', headers }
     const finalOptions = { ...defaultOptions, ...options }
-
-    console.log(`${baseUrl}${path}`)
 
     try {
         const response = await fetch(`${baseUrl}${path}`, finalOptions)

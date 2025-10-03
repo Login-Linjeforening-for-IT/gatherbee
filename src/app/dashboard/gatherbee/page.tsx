@@ -8,7 +8,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
         <div className='h-full max-w-[calc(100vw-var(--w-sidebar)-2rem)] flex flex-col'>
             <h1 className='font-semibold text-lg'>Gatherbee</h1>
             <AnalyticsWrapper
-                domain={config.domains.gatherbee}
+                domain={config.DOMAINS.GATHERBEE}
                 path={params.path || '/'}
                 from_date={params.from_date || undefined}
                 to_date={params.to_date || undefined}
