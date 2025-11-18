@@ -1,11 +1,7 @@
 import appConfig from '@config'
 import { NextRequest, NextResponse } from 'next/server'
 
-export const config = {
-    runtime: 'nodejs',
-}
-
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
     const tokenCookie = req.cookies.get('access_token')
     let validToken = false
 
