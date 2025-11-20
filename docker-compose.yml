@@ -7,7 +7,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "8700:3000"
     depends_on:
       - gatherbee-api
     env_file:
@@ -23,7 +23,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - "8080:8080"
+      - "8701:8080"
     env_file:
       - ./.env
 
