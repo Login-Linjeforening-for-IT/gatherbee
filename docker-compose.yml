@@ -2,6 +2,7 @@ services:
   gatherbee:
     container_name: gatherbee
     image: gatherbee
+    restart: always
     build:
       context: ./
       dockerfile: Dockerfile
@@ -15,6 +16,7 @@ services:
   gatherbee-api:
     container_name: gatherbee-api
     image: gatherbee-api
+    restart: always
     build:
       context: ./api
       dockerfile: Dockerfile
