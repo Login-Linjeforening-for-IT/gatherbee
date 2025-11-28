@@ -9,13 +9,13 @@ services:
     ports:
       - "8700:3000"
     depends_on:
-      - gatherbee-api
+      - gatherbee_api
     env_file:
       - ./.env
 
-  gatherbee-api:
-    container_name: gatherbee-api
-    image: gatherbee-api
+  gatherbee_api:
+    container_name: gatherbee_api
+    image: gatherbee_api
     restart: always
     build:
       context: ./api
@@ -29,7 +29,7 @@ services:
 
   postgres:
     image: postgres:15
-    container_name: gatherbee-database
+    container_name: gatherbee_database
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER:-gatherbee}
